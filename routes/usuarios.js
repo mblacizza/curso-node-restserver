@@ -1,20 +1,41 @@
 const { Router } = require('express');
+const { check } = require('express-validator');
+const { validarCampos } = require('../middlewares/validar-campos');
+const { esRolValido, mailExiste, idExiste } = require('../helpers/db-validators');
 const { usuariosGet,
-        usuariosPut, 
-        usuariosPost, 
-        usuariosDelete, 
-        UsuariosPatch } = require('../controllers/usuarios');
+    usuariosPut,
+    usuariosPost,
+    usuariosDelete,
+    UsuariosPatch } = require('../controllers/usuarios');
+const router = Router();
 
-const router =  Router();
+router.get('/', usuariosGet);
 
-router.get('/', usuariosGet );
+router.put('/:id', [
+    //Aqui defino los Middlewares para validar la info a actualizar
+    check('id', 'No es un id valido de MongoDB').isMongoId(),
+    check('id').custom( idExiste ),
+    check('rol').custom( esRolValido ),
+    validarCampos
+], usuariosPut);
 
-router.put('/:id', usuariosPut );
+router.post('/', [
+    //Aqui defino los Middlewares para validar la info a insertar
+    check('nombre', 'El nombre es obligatorio').notEmpty(),
+    check('password', 'El password debe ser de mas de 6 letras').isLength({ min: 6 }),    
+    check('rol').custom( esRolValido ),
+    check('correo','El correo ingresado no es valido').isEmail(),
+    check('correo').custom( mailExiste ),    
+    validarCampos
+], usuariosPost);
 
-router.post('/', usuariosPost);
+router.delete('/:id', [
+    //Aqui defino los Middlewares para validar la info a actualizar
+    check('id', 'No es un id valido de MongoDB').isMongoId(),
+    check('id').custom( idExiste ),  
+    validarCampos
+], usuariosDelete);
 
-router.delete('/', usuariosDelete );
-
-router.patch('/', UsuariosPatch );
+router.patch('/', UsuariosPatch);
 
 module.exports = router;
