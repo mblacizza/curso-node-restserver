@@ -59,13 +59,11 @@ const usuariosPost = async (req = request, res = response) => {
 }
 
 const usuariosDelete = async (req = request, res = response) => {
+
     const { id } = req.params;
-    
-    //Borrar fisicamente el registro de la DB, no recomendado
-    //const usuario = await Usuario.findByIdAndDelete(id);
-    
+       
     //Aqui borro cambiando el estado
-    const usuario = await Usuario.findByIdAndUpdate(id, {estado:false});
+    const usuario = await Usuario.findByIdAndUpdate(id, {estado:false});    
 
     res.json(usuario);
 }
