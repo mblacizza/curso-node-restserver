@@ -28,6 +28,9 @@ const ProductoSchema = Schema({
         required: true
     },
     descripcion:{ type: String },
+    img: {
+        type: String        
+    },
     //Stock
     disponible:{ type: Boolean, default: true}
 });
